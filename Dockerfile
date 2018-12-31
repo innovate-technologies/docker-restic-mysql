@@ -12,7 +12,7 @@ RUN chmod +x /restic
 ARG arch
 FROM multiarch/alpine:${arch}-edge
 
-RUN apk add --no-cache mysql-client gzip
+RUN apk add --no-cache mysql-client gzip ca-certificates
 
 COPY --from=resticfetch /restic /usr/bin/restic
 COPY ./run.sh /opt/backup/run.sh
