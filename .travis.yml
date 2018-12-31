@@ -1,0 +1,18 @@
+sudo: required
+services: docker
+language: bash
+env:
+    global:
+        - QEMU_VER=v2.9.1
+        - DOCKER_REPO=innovate/restic-mysql
+    matrix:        
+        - ARCH=amd64  QEMU_ARCH=x86_64  GO_ARCH=amd64
+        - ARCH=armhf  QEMU_ARCH=arm     GO_ARCH=arm
+        - ARCH=arm64  QEMU_ARCH=aarch64 GO_ARCH=arm64
+before_script:
+    - docker run --rm --privileged multiarch/qemu-user-static:register
+script:
+    - docker build --build-arg=arch=${ARCH} --build-arg=resticarch=${GO_ARCH} -t $DOCKER_REPO:$ARCH-latest ./
+after_success:
+    - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+    - docker push $DOCKER_REPO
